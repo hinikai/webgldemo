@@ -5,7 +5,7 @@ scene.fog = new THREE.Fog( 0x000000, 3500, 15000 );
 scene.fog.color.setHSL( 0.51, 0.4, 0.01 );
 
 var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100 );
-camera.position.z = 250;
+camera.position.z = 3;
 
 
 var renderer	= new THREE.WebGLRenderer({
@@ -198,9 +198,9 @@ function getData(rs) {
 
 (function(){
 
-var textureFlare0 = THREE.ImageUtils.loadTexture( "../images/lensflare0.png" );
-var textureFlare2 = THREE.ImageUtils.loadTexture( "../images/lensflare2.png" );
-var textureFlare3 = THREE.ImageUtils.loadTexture( "../images/lensflare3.png" );
+var textureFlare0 = THREE.ImageUtils.loadTexture( "textures/lensflare0.png" );
+var textureFlare2 = THREE.ImageUtils.loadTexture( "textures/lensflare2.png" );
+var textureFlare3 = THREE.ImageUtils.loadTexture( "textures/lensflare3.png" );
 
 // 添加灯光光晕效果，当做是太阳
 function addSun( h, s, l, x, y, z ) {
@@ -238,4 +238,33 @@ addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
 
 // 添加流星效果
 (function(){
+    var geometry = new THREE.Geometry();
+
+    var sprite = THREE.ImageUtils.loadTexture( "textures/disc.png" );
+
+    for ( i = 0; i < 10000; i ++ ) {
+
+        var vertex = new THREE.Vector3();
+        vertex.x = 100 * Math.random() - 50;
+        vertex.y = 100 * Math.random() - 50;
+        vertex.z = 100 * Math.random() - 50;
+
+        geometry.vertices.push( vertex );
+
+    }
+
+    material = new THREE.PointCloudMaterial( { size: 5, sizeAttenuation: false, map: sprite, alphaTest: 0.5, transparent: true } );
+    material.color.setHSL( 1.0, 0.3, 0.7 );
+
+    particles = new THREE.PointCloud( geometry, material );
+    scene.add( particles );
+
+    onRenderFcts.push(function(delta, now){
+        for ( i = 0; i < 10000; i ++ ) {
+            geometry.vertices[i].x += 1;
+            geometry.vertices[i].y += 1;
+            geometry.vertices[i].z += 1;
+        }
+    })
+
 })();
