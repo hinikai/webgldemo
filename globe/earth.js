@@ -230,13 +230,12 @@ function addSun( h, s, l, x, y, z ) {
 
 } // end addSun
 
-addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
-
+//addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
 
 })();
 
 
-// 添加流星效果
+// 添加群星效果
 (function(){
     var geometry = new THREE.Geometry();
 
@@ -266,5 +265,45 @@ addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
             geometry.vertices[i].z += 1;
         }
     })
+
+})();
+
+// 添加流星效果
+(function(){
+    var pointLight = new THREE.PointLight( 0xffffff, 3, 1000 );
+    scene.add( pointLight );
+
+    var sphere = new THREE.SphereGeometry( 0.01, 16, 8, 1 );
+    var lightMesh = new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
+    scene.add( lightMesh );
+
+    onRenderFcts.push(function(delta, now){
+        var time = Date.now() * 0.001;
+
+        lightMesh.position.x = 1 * Math.cos( time );
+        lightMesh.position.y = 1 * Math.cos( time * 1.25 );
+        lightMesh.position.z = 1 * Math.sin( time );
+
+        pointLight.position.copy( lightMesh.position );
+    })
+
+    var map = THREE.ImageUtils.loadTexture( 'lensflare0_alpha.png' );
+
+
+    var blending = "AdditiveAlphaBlending";
+
+    var geo1 = new THREE.PlaneBufferGeometry( 1, 1);
+
+    var material = new THREE.MeshBasicMaterial( { map: map } );
+    material.transparent = true;
+    material.blending = THREE[ blending ];
+
+    var x = 0.7;
+    var y = 0.7;
+    var z = 0.7;
+
+    var mesh = new THREE.Mesh( geo1, material );
+    mesh.position.set( x, y, z );
+    scene.add( mesh );
 
 })();
