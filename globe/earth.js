@@ -230,7 +230,7 @@ function addSun( h, s, l, x, y, z ) {
 
 } // end addSun
 
-//addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
+addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
 
 })();
 
