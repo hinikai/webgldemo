@@ -270,7 +270,6 @@ addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
 
 // 添加流星效果
 (function(){
-    return;
     var pointLight = new THREE.PointLight( 0xffffff, 3, 1000 );
     scene.add( pointLight );
 
