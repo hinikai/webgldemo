@@ -85,43 +85,44 @@ onRenderFcts.push(function(delta, now){
     earthCloud.rotation.y += 1/8 * delta;		
 })
 
-// add start
+// add star
+// 添加定位点
 function addStar(data) {
 
-geometry = new THREE.Geometry();
+    geometry = new THREE.Geometry();
 
-var randomStart = [77.998474, 21.097808];
-var randomEnd = [130.099619, 53.848158];
+    var randomStart = [77.998474, 21.097808];
+    var randomEnd = [130.099619, 53.848158];
 
-for ( i = 0; i < data.length; i ++ ) {
-    
-    var vertex = latLongToVector3(
-        data[i][1], 
-        data[i][0], 
-        0.5, 
-        0);
+    for ( i = 0; i < data.length; i ++ ) {
+        
+        var vertex = latLongToVector3(
+            data[i][1], 
+            data[i][0], 
+            0.5, 
+            0);
 
-    /*
-    var vertex = new THREE.Vector3();
-    vertex.x = Math.random() * 0.5 + 0.5;
-    vertex.y = Math.random() * 0.5 + 0.5;
-    vertex.z = Math.random() * 0.5 + 0.5;
-    */
+        /*
+        var vertex = new THREE.Vector3();
+        vertex.x = Math.random() * 0.5 + 0.5;
+        vertex.y = Math.random() * 0.5 + 0.5;
+        vertex.z = Math.random() * 0.5 + 0.5;
+        */
 
-    geometry.vertices.push( vertex );
+        geometry.vertices.push( vertex );
 
-}
+    }
 
-var color  = [0.1, 0.1, 1.0];
-var sprite = THREE.ImageUtils.loadTexture( "snowflake1.png" );
-var size   = 0.05;
+    var color  = [0.1, 0.1, 1.0];
+    var sprite = THREE.ImageUtils.loadTexture( "snowflake1.png" );
+    var size   = 0.05;
 
-var materials = new THREE.PointCloudMaterial( { size: size, map: sprite, blending: THREE.AdditiveBlending, depthTest: false, transparent : true } );
-materials.color.setHSL( color[0], color[1], color[2] );
+    var materials = new THREE.PointCloudMaterial( { size: size, map: sprite, blending: THREE.AdditiveBlending, depthTest: false, transparent : true } );
+    materials.color.setHSL( color[0], color[1], color[2] );
 
-particles = new THREE.PointCloud( geometry, materials );
+    particles = new THREE.PointCloud( geometry, materials );
 
-containerEarth.add( particles );
+    containerEarth.add( particles );
 
 } // end add start
 
@@ -136,13 +137,13 @@ document.addEventListener('mousemove', function(event){
 }, false)
 
 onRenderFcts.push(function(delta, now){
-    //camera.position.x += (mouse.x * 5 - camera.position.x) * (delta*3)
-    //camera.position.y += (mouse.y * 5 - camera.position.y) * (delta*3)
+    camera.position.x += (mouse.x * 5 - camera.position.x) * (delta*3)
+    camera.position.y += (mouse.y * 5 - camera.position.y) * (delta*3)
 
     // 根据时间变化
     var timer = Date.now() * 0.0001;
-    camera.position.x = (Math.cos( timer ) *  3);
-    camera.position.z = (Math.sin( timer ) *  3);
+    //camera.position.x = (Math.cos( timer ) *  3);
+    //camera.position.z = (Math.sin( timer ) *  3);
 
     camera.lookAt( scene.position )
 })
@@ -268,7 +269,7 @@ addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
 
 })();
 
-// 添加流星效果
+// 添加流星效果1
 (function(){
     var pointLight = new THREE.PointLight( 0xffffff, 3, 1000 );
     scene.add( pointLight );
@@ -305,5 +306,60 @@ addSun( 0.08, 0.8, 0.5,    0, 0.5, 1.5 );
     var mesh = new THREE.Mesh( geo1, material );
     mesh.position.set( x, y, z );
     scene.add( mesh );
+
+})();
+
+(function(){
+    ////////////
+    // 群星效果2//
+    ////////////
+    
+    var particleTexture = THREE.ImageUtils.loadTexture( 'textures/spark.png' );
+
+    particleGroup = new THREE.Object3D();
+    
+    var totalParticles = 200;
+    var radiusRange = 10;
+    for( var i = 0; i < totalParticles; i++ ) 
+    {
+        var spriteMaterial = new THREE.SpriteMaterial( { map: particleTexture, useScreenCoordinates: false, color: 0xffffff } );
+        
+        var sprite = new THREE.Sprite( spriteMaterial );
+        sprite.scale.set( 0.5, 0.5, 1.0 ); // imageWidth, imageHeight
+        sprite.position.set( Math.random() * 1 - 0.5, Math.random() * 1 - 0.5, Math.random() * 1 - 0.5 );
+        // for a cube:
+        // sprite.position.multiplyScalar( radiusRange );
+        // for a solid sphere:
+        // sprite.position.setLength( radiusRange * Math.random() );
+        // for a spherical shell:
+        sprite.position.setLength( radiusRange * (Math.random() * 0.1 + 0.9) );
+        
+        // sprite.color.setRGB( Math.random(),  Math.random(),  Math.random() ); 
+        sprite.material.color.setHSL( Math.random(), 0.9, 0.7 ); 
+        
+        // sprite.opacity = 0.80; // translucent particles
+        sprite.material.blending = THREE.AdditiveBlending; // "glowing" particles
+        
+        particleGroup.add( sprite );
+    }
+    particleGroup.position.x = 0;
+    particleGroup.position.y = 0;
+    particleGroup.position.z = 0;
+    scene.add( particleGroup );
+})();
+
+(function(){
+    var particleTexture = THREE.ImageUtils.loadTexture( 'textures/spark.png' );
+
+    var spriteMaterial = new THREE.SpriteMaterial( { map: particleTexture, useScreenCoordinates: false, color: 0xffffff } );
+
+    for (var i = 0; i < 100; i++) {
+        var spriteMaterial = new THREE.SpriteMaterial( { map: particleTexture, useScreenCoordinates: false, color: 0xffffff } );
+        var sprite = new THREE.Sprite( spriteMaterial );
+        sprite.scale.set( .1, .1, 1 ); // imageWidth, imageHeight
+        sprite.position.set( i / 200 + 0.5, i / 200 + 0.5, i / 200 + 0.5 );
+        sprite.material.color.setHSL( 0.8, 0.9, i / 50 );
+        scene.add( sprite );
+    }
 
 })();
